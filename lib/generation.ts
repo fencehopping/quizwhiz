@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { openai, openaiModel } from "@/lib/openai";
+import { getOpenAIClient, openaiModel } from "@/lib/openai";
 import { READING_LEVELS, ReadingLevel, WorksheetGeneration } from "@/lib/types";
 
 const worksheetSchema = z.object({
@@ -66,9 +66,7 @@ export async function generateWorksheetFromTopic(input: {
   readingLevel: ReadingLevel;
   regenerateStyle: "default" | "simpler_vocabulary" | "harder_inferencing";
 }): Promise<WorksheetGeneration> {
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error("OPENAI_API_KEY is not configured.");
-  }
+  const openai = getOpenAIClient();
 
   const prompt = [
     `Source title: ${input.sourceTitle}`,
