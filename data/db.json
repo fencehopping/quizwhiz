@@ -1,0 +1,85 @@
+{
+  "sourceStories": [
+    {
+      "id": "4ed1170a-0d0b-4ac1-9b28-1bc2794660b7",
+      "createdAt": "2026-04-17T17:24:19.688Z",
+      "sourceTitle": "City Students Build Solar Bus Stop Lights",
+      "sourceSummary": "A student engineering club partnered with the city to install small solar lights at bus stops so riders can read route signs after dark.",
+      "sourceUrl": "https://example.org/news/solar-bus-stop-lights",
+      "sourcePublishedAt": "2026-04-16T13:00:00.000Z"
+    },
+    {
+      "id": "8bcfe4c1-99e3-469f-9190-57ece5432672",
+      "createdAt": "2026-04-17T17:24:19.688Z",
+      "sourceTitle": "Library Starts Weekend Language Exchange",
+      "sourceSummary": "A public library launched a free Saturday program where teens and adults practice conversational English and Spanish in guided groups.",
+      "sourceUrl": "https://example.org/news/library-language-exchange",
+      "sourcePublishedAt": "2026-04-15T10:00:00.000Z"
+    },
+    {
+      "id": "37488333-1183-44b4-aa45-23787f7165d8",
+      "createdAt": "2026-04-17T17:24:19.688Z",
+      "sourceTitle": "River Cleanup Team Tracks Plastic Waste",
+      "sourceSummary": "Volunteers used a new tracking app during a cleanup day to measure the amount and type of plastic collected near local riverbanks.",
+      "sourceUrl": "https://example.org/news/river-cleanup-app",
+      "sourcePublishedAt": "2026-04-14T09:30:00.000Z"
+    },
+    {
+      "id": "81e51e34-aff7-4fd3-8e3c-079b9e3b6030",
+      "createdAt": "2026-04-17T17:24:19.688Z",
+      "sourceTitle": "High School Adds Quiet Study Courtyard",
+      "sourceSummary": "After student feedback, a high school converted an unused courtyard into a quiet reading and study zone with shade and seating.",
+      "sourceUrl": "https://example.org/news/quiet-study-courtyard",
+      "sourcePublishedAt": "2026-04-14T15:10:00.000Z"
+    },
+    {
+      "id": "044b20b3-8b11-468e-826c-578fc05bbc5f",
+      "createdAt": "2026-04-17T17:24:19.688Z",
+      "sourceTitle": "Teen Robotics Team Wins Regional Match",
+      "sourceSummary": "A local robotics team won a regional competition by designing a robot arm that sorted objects faster and with fewer errors.",
+      "sourceUrl": "https://example.org/news/robotics-regional-win",
+      "sourcePublishedAt": "2026-04-13T18:00:00.000Z"
+    },
+    {
+      "id": "0958db73-39da-4707-b04f-cdb1ffa94066",
+      "createdAt": "2026-04-17T17:24:19.688Z",
+      "sourceTitle": "Neighborhood Garden Doubles Food Donations",
+      "sourceSummary": "Community volunteers expanded a garden project and doubled the number of fresh produce boxes donated to nearby families this month.",
+      "sourceUrl": "https://example.org/news/garden-food-donations",
+      "sourcePublishedAt": "2026-04-12T12:45:00.000Z"
+    },
+    {
+      "id": "7545d8b6-a266-4537-91c4-9754367d02a9",
+      "createdAt": "2026-04-17T17:24:19.688Z",
+      "sourceTitle": "Transit App Adds Live Elevator Alerts",
+      "sourceSummary": "A city transit app now sends live alerts when station elevators are out of service to help riders plan accessible routes.",
+      "sourceUrl": "https://example.org/news/transit-elevator-alerts",
+      "sourcePublishedAt": "2026-04-12T08:20:00.000Z"
+    },
+    {
+      "id": "ffe6fa06-3614-4732-90fe-c951b4e4c4f7",
+      "createdAt": "2026-04-17T17:24:19.688Z",
+      "sourceTitle": "Museum Offers Student Audio Guide Challenge",
+      "sourceSummary": "A science museum invited students to script short audio guides for exhibits, and winning entries will be recorded for summer visitors.",
+      "sourceUrl": "https://example.org/news/student-audio-guide",
+      "sourcePublishedAt": "2026-04-11T17:30:00.000Z"
+    },
+    {
+      "id": "a671d66f-6ecc-465e-8180-04dc4be491d3",
+      "createdAt": "2026-04-17T17:24:19.688Z",
+      "sourceTitle": "City Park Tests Heat-Relief Stations",
+      "sourceSummary": "Parks staff tested shaded cooling stations and water refill points after a warm spring week to improve safety during outdoor events.",
+      "sourceUrl": "https://example.org/news/park-heat-relief",
+      "sourcePublishedAt": "2026-04-10T14:05:00.000Z"
+    },
+    {
+      "id": "02ff935b-b97b-4e08-9112-707e5b7f22eb",
+      "createdAt": "2026-04-17T17:24:19.688Z",
+      "sourceTitle": "Students Launch School Podcast on Local History",
+      "sourceSummary": "Middle and high school students collaborated on a podcast series featuring interviews with longtime residents about neighborhood history.",
+      "sourceUrl": "https://example.org/news/school-local-history-podcast",
+      "sourcePublishedAt": "2026-04-09T11:15:00.000Z"
+    }
+  ],
+  "generatedWorksheets": []
+}

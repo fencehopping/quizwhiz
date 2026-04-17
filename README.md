@@ -1,36 +1,132 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SpeechWhiz MVP
 
-## Getting Started
+SpeechWhiz is a Next.js MVP for speech-language pathologists to turn current-events topics into classroom-ready reading comprehension worksheets.
 
-First, run the development server:
+## What this app does
+
+- Shows "Today’s Stories" from a provider-based ingestion layer.
+- Lets the user choose a reading level (`8th Grade` or `High School`).
+- Generates an original 5-sentence passage plus:
+  - 3 multiple-choice questions (main idea, detail, inferencing)
+  - answer key
+  - 3-5 vocabulary words with student-friendly definitions
+- Supports copy, print, regenerate, and save-to-library flows.
+- Includes a manual-entry fallback workflow.
+- Includes admin/library behaviors to reopen and delete prior worksheets.
+
+## Stack
+
+- Next.js (App Router)
+- TypeScript
+- Tailwind CSS
+- Typed local JSON storage (lightweight MVP database)
+- OpenAI API (`chat.completions` with JSON schema output)
+
+## Data model
+
+TypeScript models in `lib/types.ts`:
+
+1. `SourceStory`
+- `id`
+- `sourceTitle`
+- `sourceSummary`
+- `sourceUrl`
+- `sourcePublishedAt`
+- `rawContent` (optional)
+- `createdAt`
+
+2. `GeneratedWorksheet`
+- `id`
+- `sourceStoryId`
+- `readingLevel`
+- `title`
+- `story`
+- `questionsJson`
+- `answerKeyJson`
+- `vocabularyJson`
+- `createdAt`
+
+## Provider abstraction
+
+Source ingestion is abstracted behind `SourceProvider`:
+
+- `lib/providers/types.ts`
+- `lib/providers/mockProvider.ts`
+- `lib/providers/manualProvider.ts`
+
+The app currently ships with:
+- mock provider (seeded 10 sample stories)
+- manual-entry fallback
+
+This makes it straightforward to add RSS/news API ingestion later without changing generation/UI logic.
+
+## Setup
+
+1. Install dependencies
+
+```bash
+npm install
+```
+
+2. Create env file
+
+```bash
+cp .env.example .env
+```
+
+3. Add your OpenAI key to `.env`
+
+```env
+DATABASE_FILE="db.json"
+OPENAI_API_KEY="your_openai_api_key"
+```
+
+4. Seed mock stories
+
+```bash
+npm run db:setup
+```
+
+5. Start dev server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Routes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/` Dashboard (today’s stories + generation)
+- `/manual-entry` Manual source entry
+- `/library` Saved materials
+- `/worksheets/[id]` Saved worksheet detail view
 
-## Learn More
+## API endpoints
 
-To learn more about Next.js, take a look at the following resources:
+- `GET /api/source-stories`
+- `POST /api/source-stories/ingest`
+- `POST /api/generate`
+- `GET /api/worksheets`
+- `POST /api/worksheets`
+- `GET /api/worksheets/:id`
+- `DELETE /api/worksheets/:id`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Notes on content safety and copyright intent
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Generation prompts explicitly instruct the model to:
+- produce original educational material inspired by topic gist
+- avoid copying source text
+- keep output concise and classroom-safe
 
-## Deploy on Vercel
+## MVP extras included
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Regenerate with simpler vocabulary
+- Regenerate with harder inferencing
+- Print-friendly layout
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Not yet included (optional next)
+
+- native PDF export
+- in-place editable worksheet fields before saving
+- automated daily cron ingestion from RSS/news API
