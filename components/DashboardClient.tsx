@@ -167,19 +167,19 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
   return (
     <main className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
       <section className="space-y-4">
-        <div className="rounded-3xl border border-amber-200 bg-white p-5">
+        <div className="rounded-3xl border border-cyan-200 bg-white p-5">
           <div className="flex items-center justify-between gap-4">
-            <h2 className="text-xl font-semibold text-amber-950">Today&apos;s Stories</h2>
+            <h2 className="text-xl font-semibold text-teal-950">Today&apos;s Stories</h2>
             <button
               type="button"
               onClick={refreshStories}
               disabled={refreshing}
-              className="rounded-full border border-amber-300 px-3 py-1.5 text-sm font-medium text-amber-900 hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-full border border-cyan-300 px-3 py-1.5 text-sm font-medium text-teal-900 hover:bg-cyan-100 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {refreshing ? "Refreshing..." : "Refresh"}
             </button>
           </div>
-          <p className="mt-1 text-sm text-amber-800">Choose one source and a reading level, then generate.</p>
+          <p className="mt-1 text-sm text-teal-800">Choose one source and a reading level, then generate.</p>
 
           <div className="mt-4 space-y-3">
             {stories.map((story) => (
@@ -195,16 +195,16 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
       </section>
 
       <section className="space-y-4">
-        <div className="rounded-3xl border border-amber-200 bg-white p-5">
-          <h2 className="text-xl font-semibold text-amber-950">Generate Worksheet</h2>
-          <label htmlFor="reading-level" className="mt-4 block text-sm font-medium text-amber-900">
+        <div className="rounded-3xl border border-cyan-200 bg-white p-5">
+          <h2 className="text-xl font-semibold text-teal-950">Generate Worksheet</h2>
+          <label htmlFor="reading-level" className="mt-4 block text-sm font-medium text-teal-900">
             Reading Level
           </label>
           <select
             id="reading-level"
             value={readingLevel}
             onChange={(event) => setReadingLevel(event.target.value as ReadingLevel)}
-            className="mt-1 w-full rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-amber-950"
+            className="mt-1 w-full rounded-xl border border-cyan-300 bg-cyan-50 px-3 py-2 text-teal-950"
           >
             {readingLevelOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -217,7 +217,7 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
             type="button"
             onClick={() => generate("default")}
             disabled={loading || !selectedStoryId}
-            className="mt-4 w-full rounded-xl bg-amber-600 px-4 py-2.5 font-semibold text-white transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:bg-amber-300"
+            className="mt-4 w-full rounded-xl bg-teal-600 px-4 py-2.5 font-semibold text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-cyan-300"
           >
             {loading ? "Generating..." : "Generate Worksheet"}
           </button>
@@ -232,14 +232,14 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
               <button
                 type="button"
                 onClick={copyWorksheet}
-                className="rounded-full border border-amber-300 px-3 py-1.5 text-sm font-medium text-amber-900 hover:bg-amber-100"
+                className="rounded-full border border-cyan-300 px-3 py-1.5 text-sm font-medium text-teal-900 hover:bg-cyan-100"
               >
                 Copy Output
               </button>
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="rounded-full border border-amber-300 px-3 py-1.5 text-sm font-medium text-amber-900 hover:bg-amber-100"
+                className="rounded-full border border-cyan-300 px-3 py-1.5 text-sm font-medium text-teal-900 hover:bg-cyan-100"
               >
                 Print Worksheet
               </button>
@@ -247,7 +247,7 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
                 type="button"
                 onClick={() => generate("default")}
                 disabled={loading}
-                className="rounded-full border border-amber-300 px-3 py-1.5 text-sm font-medium text-amber-900 hover:bg-amber-100 disabled:opacity-50"
+                className="rounded-full border border-cyan-300 px-3 py-1.5 text-sm font-medium text-teal-900 hover:bg-cyan-100 disabled:opacity-50"
               >
                 Regenerate
               </button>
@@ -255,7 +255,7 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
                 type="button"
                 onClick={() => generate("simpler_vocabulary")}
                 disabled={loading}
-                className="rounded-full border border-amber-300 px-3 py-1.5 text-sm font-medium text-amber-900 hover:bg-amber-100 disabled:opacity-50"
+                className="rounded-full border border-cyan-300 px-3 py-1.5 text-sm font-medium text-teal-900 hover:bg-cyan-100 disabled:opacity-50"
               >
                 Regenerate with Simpler Vocabulary
               </button>
@@ -263,7 +263,7 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
                 type="button"
                 onClick={() => generate("harder_inferencing")}
                 disabled={loading}
-                className="rounded-full border border-amber-300 px-3 py-1.5 text-sm font-medium text-amber-900 hover:bg-amber-100 disabled:opacity-50"
+                className="rounded-full border border-cyan-300 px-3 py-1.5 text-sm font-medium text-teal-900 hover:bg-cyan-100 disabled:opacity-50"
               >
                 Regenerate with Harder Inferencing
               </button>
@@ -289,7 +289,7 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
             />
           </>
         ) : (
-          <div className="rounded-3xl border border-dashed border-amber-300 bg-amber-50 p-8 text-center text-amber-800">
+          <div className="rounded-3xl border border-dashed border-cyan-300 bg-cyan-50 p-8 text-center text-teal-800">
             Worksheet output will appear here after generation.
           </div>
         )}

@@ -92,39 +92,39 @@ export function ManualEntryClient() {
 
   return (
     <main className="mx-auto w-full max-w-4xl space-y-5 px-4 py-6 sm:px-6 lg:px-8">
-      <section className="rounded-3xl border border-amber-200 bg-white p-6">
-        <h2 className="text-xl font-semibold text-amber-950">Manual Source Entry</h2>
-        <p className="mt-1 text-sm text-amber-800">
+      <section className="rounded-3xl border border-cyan-200 bg-white p-6">
+        <h2 className="text-xl font-semibold text-teal-950">Manual Source Entry</h2>
+        <p className="mt-1 text-sm text-teal-800">
           Paste a title and short summary, then generate a classroom-ready worksheet.
         </p>
 
         <div className="mt-4 space-y-4">
-          <label className="block text-sm font-medium text-amber-900">
+          <label className="block text-sm font-medium text-teal-900">
             Article Title
             <input
               value={title}
               onChange={(event) => setTitle(event.target.value)}
-              className="mt-1 w-full rounded-xl border border-amber-300 bg-amber-50 px-3 py-2"
+              className="mt-1 w-full rounded-xl border border-cyan-300 bg-cyan-50 px-3 py-2"
               placeholder="Paste title"
             />
           </label>
 
-          <label className="block text-sm font-medium text-amber-900">
+          <label className="block text-sm font-medium text-teal-900">
             Short Summary
             <textarea
               value={summary}
               onChange={(event) => setSummary(event.target.value)}
-              className="mt-1 h-32 w-full rounded-xl border border-amber-300 bg-amber-50 px-3 py-2"
+              className="mt-1 h-32 w-full rounded-xl border border-cyan-300 bg-cyan-50 px-3 py-2"
               placeholder="Paste short source summary"
             />
           </label>
 
-          <label className="block text-sm font-medium text-amber-900">
+          <label className="block text-sm font-medium text-teal-900">
             Reading Level
             <select
               value={readingLevel}
               onChange={(event) => setReadingLevel(event.target.value as ReadingLevel)}
-              className="mt-1 w-full rounded-xl border border-amber-300 bg-amber-50 px-3 py-2"
+              className="mt-1 w-full rounded-xl border border-cyan-300 bg-cyan-50 px-3 py-2"
             >
               {readingLevelOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -139,7 +139,7 @@ export function ManualEntryClient() {
           type="button"
           onClick={generate}
           disabled={loading}
-          className="mt-4 rounded-xl bg-amber-600 px-4 py-2.5 font-semibold text-white hover:bg-amber-700 disabled:opacity-60"
+          className="mt-4 rounded-xl bg-teal-600 px-4 py-2.5 font-semibold text-white hover:bg-teal-700 disabled:opacity-60"
         >
           {loading ? "Generating..." : "Generate Worksheet"}
         </button>
@@ -154,7 +154,7 @@ export function ManualEntryClient() {
             <button
               type="button"
               onClick={() => window.print()}
-              className="rounded-full border border-amber-300 px-3 py-1.5 text-sm font-medium text-amber-900 hover:bg-amber-100"
+              className="rounded-full border border-cyan-300 px-3 py-1.5 text-sm font-medium text-teal-900 hover:bg-cyan-100"
             >
               Print Worksheet
             </button>

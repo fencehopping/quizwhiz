@@ -40,14 +40,14 @@ export function SavedWorksheetActions({ worksheetId, worksheet }: SavedWorksheet
       <button
         type="button"
         onClick={() => navigator.clipboard.writeText(asText(worksheet))}
-        className="rounded-full border border-amber-300 px-3 py-1.5 text-sm font-medium text-amber-900 hover:bg-amber-100"
+        className="rounded-full border border-cyan-300 px-3 py-1.5 text-sm font-medium text-teal-900 hover:bg-cyan-100"
       >
         Copy Output
       </button>
       <button
         type="button"
         onClick={() => window.print()}
-        className="rounded-full border border-amber-300 px-3 py-1.5 text-sm font-medium text-amber-900 hover:bg-amber-100"
+        className="rounded-full border border-cyan-300 px-3 py-1.5 text-sm font-medium text-teal-900 hover:bg-cyan-100"
       >
         Print Worksheet
       </button>

@@ -25,7 +25,7 @@ export default async function WorksheetPage({
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#fff6df,white_35%)]">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#e6f7ff,white_35%)]">
       <TopNav title="Worksheet" subtitle="Saved material" />
       <main className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
         <SavedWorksheetActions worksheetId={worksheet.id} worksheet={parsedWorksheet} />

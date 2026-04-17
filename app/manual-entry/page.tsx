@@ -3,7 +3,7 @@ import { TopNav } from "@/components/TopNav";
 
 export default function ManualEntryPage() {
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#fff6df,white_35%)]">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#e6f7ff,white_35%)]">
       <TopNav
         title="Manual Entry"
         subtitle="Paste your own source summary when needed"

@@ -7,7 +7,7 @@ export default async function HomePage() {
   const stories = await listSourceStories();
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#fff6df,white_35%)]">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#e6f7ff,white_35%)]">
       <TopNav title="Dashboard" subtitle="Build therapy-ready reading materials from today&apos;s stories" />
       <DashboardClient initialStories={stories} />
     </div>
