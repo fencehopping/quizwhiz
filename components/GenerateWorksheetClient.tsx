@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ReadingLevel, WorksheetGeneration } from "@/lib/types";
 
@@ -41,12 +41,18 @@ function LoadingSkeleton() {
 export function GenerateWorksheetClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const hasStartedRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
+  const jobId = useMemo(() => searchParams.get("job"), [searchParams]);
 
   useEffect(() => {
+    if (hasStartedRef.current) {
+      return;
+    }
+    hasStartedRef.current = true;
+
     async function run() {
       try {
-        const jobId = searchParams.get("job");
         if (!jobId) {
           throw new Error("Generation job was missing. Please start from Today's Stories.");
         }
@@ -100,8 +106,12 @@ export function GenerateWorksheetClient() {
           throw new Error(savedPayload.error ?? "Could not save worksheet.");
         }
 
-        sessionStorage.removeItem(storageKey);
+        // Keep the payload until redirect is in flight to avoid false \"expired\"
+        // errors if client effects rerun before navigation completes.
         router.replace(`/worksheets/${savedPayload.worksheet.id}`);
+        setTimeout(() => {
+          sessionStorage.removeItem(storageKey);
+        }, 1000);
       } catch (generationError) {
         setError(
           generationError instanceof Error
@@ -112,7 +122,7 @@ export function GenerateWorksheetClient() {
     }
 
     void run();
-  }, [router, searchParams]);
+  }, [jobId, router]);
 
   if (error) {
     return (
