@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap");
 
 :root {
   --background: #f2fbff;
@@ -9,8 +10,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Avenir Next", "Trebuchet MS", "Gill Sans", sans-serif;
-  --font-serif: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  --font-sans: "Montserrat", "Avenir Next", "Trebuchet MS", sans-serif;
+  --font-serif: "Montserrat", "Avenir Next", "Trebuchet MS", sans-serif;
 }
 
 * {
@@ -21,13 +22,13 @@ body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: "Avenir Next", "Trebuchet MS", "Gill Sans", sans-serif;
+  font-family: "Montserrat", "Avenir Next", "Trebuchet MS", sans-serif;
 }
 
 h1,
 h2,
 h3 {
-  font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  font-family: "Montserrat", "Avenir Next", "Trebuchet MS", sans-serif;
 }
 
 @media print {
