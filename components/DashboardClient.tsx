@@ -206,7 +206,7 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
             type="button"
             onClick={importStoriesFromUrl}
             disabled={urlImporting}
-            className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-cyan-300"
+            className="whitespace-nowrap rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-cyan-300"
           >
             {urlImporting ? "Importing..." : "Import Stories"}
           </button>
