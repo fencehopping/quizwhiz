@@ -17,12 +17,24 @@ function decodeXmlEntities(input: string): string {
 }
 
 function stripHtml(input: string): string {
-  return decodeXmlEntities(input.replace(/<[^>]+>/g, " ")).trim();
+  const decoded = decodeXmlEntities(input);
+  return decoded.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
 
 function extractTag(xml: string, tag: string): string {
   const match = xml.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\/${tag}>`, "i"));
   return match ? match[1].trim() : "";
+}
+
+function summarizeDescription(rawDescription: string): string {
+  const cleaned = stripHtml(rawDescription);
+  if (!cleaned) {
+    return "";
+  }
+
+  // Google News descriptions can include many related headlines in one blob.
+  // Keep the lead portion to avoid overflowing the UI with noisy snippets.
+  return cleaned.slice(0, 360).trim();
 }
 
 export class GoogleNewsProvider implements SourceProvider {
@@ -46,7 +58,7 @@ export class GoogleNewsProvider implements SourceProvider {
 
     const stories = itemMatches.slice(0, MAX_ITEMS).flatMap((item): IngestedSourceStory[] => {
       const title = decodeXmlEntities(extractTag(item, "title"));
-      const summary = stripHtml(extractTag(item, "description"));
+      const summary = summarizeDescription(extractTag(item, "description"));
       const link = decodeXmlEntities(extractTag(item, "link"));
       const pubDateRaw = extractTag(item, "pubDate");
       const publishedAt = pubDateRaw ? new Date(pubDateRaw) : new Date();

@@ -4,6 +4,19 @@ import { createManualSourceStory } from "@/lib/sourceStories";
 import { GenerateRequestBody, isReadingLevel } from "@/lib/types";
 import { getSourceStoryById } from "@/lib/store";
 
+function cleanText(input: string): string {
+  return input
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as GenerateRequestBody;
@@ -39,8 +52,8 @@ export async function POST(request: Request) {
     }
 
     const worksheet = await generateWorksheetFromTopic({
-      sourceTitle: sourceStory.sourceTitle,
-      sourceSummary: sourceStory.sourceSummary,
+      sourceTitle: cleanText(sourceStory.sourceTitle),
+      sourceSummary: cleanText(sourceStory.sourceSummary),
       readingLevel: body.readingLevel,
       regenerateStyle: body.regenerateStyle ?? "default",
     });

@@ -7,10 +7,24 @@ import {
   upsertSourceStories,
 } from "@/lib/store";
 
+function decodeHtmlEntities(input: string): string {
+  return input
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">");
+}
+
+function cleanText(input: string): string {
+  return decodeHtmlEntities(input).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
 function normalizeStories(stories: IngestedSourceStory[]) {
   return stories.map((story) => ({
-    sourceTitle: story.sourceTitle,
-    sourceSummary: story.sourceSummary,
+    sourceTitle: cleanText(story.sourceTitle),
+    sourceSummary: cleanText(story.sourceSummary),
     sourceUrl: story.sourceUrl,
     sourcePublishedAt: story.sourcePublishedAt.toISOString(),
     rawContent: story.rawContent,
@@ -45,7 +59,13 @@ export async function createManualSourceStory(input: {
 
 export async function listSourceStories() {
   const stories = await listSourceStoriesFromDb();
-  return stories.filter((story) => story.sourceUrl.includes("news.google.com"));
+  return stories
+    .filter((story) => story.sourceUrl.includes("news.google.com"))
+    .map((story) => ({
+      ...story,
+      sourceTitle: cleanText(story.sourceTitle),
+      sourceSummary: cleanText(story.sourceSummary),
+    }));
 }
 
 export async function importStoriesFromUrl(url: string): Promise<number> {
