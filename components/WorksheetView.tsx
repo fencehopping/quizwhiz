@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { ReadingLevel, WorksheetGeneration, WorksheetQuestion, readingLevelOptions } from "@/lib/types";
 
 type WorksheetViewProps = {
@@ -15,8 +16,28 @@ function typeLabel(type: WorksheetQuestion["type"]) {
 }
 
 export function WorksheetView({ worksheet, readingLevel, sourceTitle }: WorksheetViewProps) {
+  const [showAnswerKey, setShowAnswerKey] = useState(false);
+  const [selectedAnswers, setSelectedAnswers] = useState<
+    Record<number, "A" | "B" | "C" | "D" | undefined>
+  >({});
+
   const readingLevelLabel =
     readingLevelOptions.find((option) => option.value === readingLevel)?.label ?? readingLevel;
+
+  function letterFromIndex(index: number): "A" | "B" | "C" | "D" {
+    return (["A", "B", "C", "D"][index] ?? "A") as "A" | "B" | "C" | "D";
+  }
+
+  function selectAnswer(questionIndex: number, selectedLetter: "A" | "B" | "C" | "D") {
+    if (selectedAnswers[questionIndex]) {
+      return;
+    }
+
+    setSelectedAnswers((current) => ({
+      ...current,
+      [questionIndex]: selectedLetter,
+    }));
+  }
 
   return (
     <article className="rounded-3xl border border-cyan-200 bg-white p-6 shadow-sm sm:p-8 print:border-none print:p-0 print:shadow-none">
@@ -42,10 +63,42 @@ export function WorksheetView({ worksheet, readingLevel, sourceTitle }: Workshee
               <p className="font-medium text-teal-900">
                 {index + 1}. ({typeLabel(question.type)}) {question.question}
               </p>
-              <ul className="mt-2 grid gap-1 text-sm text-teal-900">
-                {question.choices.map((choice, choiceIndex) => (
-                  <li key={`${question.type}-${choiceIndex}`}>{choice}</li>
-                ))}
+              <ul className="mt-3 grid gap-2 text-sm text-teal-900">
+                {question.choices.map((choice, choiceIndex) => {
+                  const letter = letterFromIndex(choiceIndex);
+                  const selected = selectedAnswers[index];
+                  const wasAnswered = Boolean(selected);
+                  const isCorrectChoice = letter === question.correctAnswer;
+                  const isSelected = selected === letter;
+                  const selectedWrong = wasAnswered && isSelected && !isCorrectChoice;
+
+                  const choiceClassName = isCorrectChoice && wasAnswered
+                    ? "border-emerald-500 bg-emerald-50 text-emerald-900"
+                    : selectedWrong
+                      ? "border-red-400 bg-red-50 text-red-800"
+                      : "border-cyan-200 bg-white text-teal-900 hover:bg-cyan-50";
+
+                  return (
+                    <li key={`${question.type}-${choiceIndex}`}>
+                      <button
+                        type="button"
+                        onClick={() => selectAnswer(index, letter)}
+                        className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left transition ${choiceClassName}`}
+                      >
+                        <span>{choice}</span>
+                        {isSelected && isCorrectChoice ? (
+                          <span className="ml-3 font-bold text-emerald-700">✓</span>
+                        ) : null}
+                        {selectedWrong ? <span className="ml-3 font-bold text-red-700">✕</span> : null}
+                        {!isSelected && wasAnswered && isCorrectChoice ? (
+                          <span className="ml-3 text-xs font-semibold text-emerald-700">
+                            Correct
+                          </span>
+                        ) : null}
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             </li>
           ))}
@@ -53,14 +106,27 @@ export function WorksheetView({ worksheet, readingLevel, sourceTitle }: Workshee
       </section>
 
       <section className="mt-8">
-        <h3 className="text-lg font-semibold text-teal-900">Answer Key</h3>
-        <ul className="mt-2 space-y-1 text-teal-900">
-          {worksheet.questions.map((question, index) => (
-            <li key={`answer-${question.type}-${index}`}>
-              Question {index + 1}: {question.correctAnswer}
-            </li>
-          ))}
-        </ul>
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-lg font-semibold text-teal-900">Answer Key</h3>
+          <button
+            type="button"
+            onClick={() => setShowAnswerKey((current) => !current)}
+            className="rounded-full border border-cyan-300 px-3 py-1 text-sm font-medium text-teal-900 hover:bg-cyan-100"
+          >
+            {showAnswerKey ? "Hide Answer Key" : "Show Answer Key"}
+          </button>
+        </div>
+        {showAnswerKey ? (
+          <ul className="mt-2 space-y-1 text-teal-900">
+            {worksheet.questions.map((question, index) => (
+              <li key={`answer-${question.type}-${index}`}>
+                Question {index + 1}: {question.correctAnswer}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-2 text-sm text-teal-700">Answer key is hidden until you reveal it.</p>
+        )}
       </section>
 
       <section className="mt-8">

@@ -156,7 +156,7 @@ export function ManualEntryClient() {
               onClick={() => window.print()}
               className="rounded-full border border-cyan-300 px-3 py-1.5 text-sm font-medium text-teal-900 hover:bg-cyan-100"
             >
-              Print Worksheet
+              Print Quiz as PDF
             </button>
             <button
               type="button"
