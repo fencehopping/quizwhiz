@@ -91,24 +91,14 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
         throw new Error("Story not found. Please refresh and try again.");
       }
 
-      if (typeof crypto === "undefined" || !crypto.randomUUID) {
-        throw new Error("Secure generation is unavailable in this browser. Please refresh and try again.");
-      }
+      const params = new URLSearchParams({
+        sourceStoryId: selectedStory.id,
+        readingLevel,
+        sourceTitle: selectedStory.sourceTitle.slice(0, 220),
+        sourceSummary: selectedStory.sourceSummary.slice(0, 800),
+      });
 
-      const jobId = crypto.randomUUID();
-
-      const storageKey = `generate-job:${jobId}`;
-      sessionStorage.setItem(
-        storageKey,
-        JSON.stringify({
-          sourceStoryId: selectedStory.id,
-          sourceTitle: selectedStory.sourceTitle,
-          sourceSummary: selectedStory.sourceSummary,
-          readingLevel,
-        }),
-      );
-
-      router.push(`/worksheets/generate?job=${encodeURIComponent(jobId)}`);
+      router.push(`/worksheets/generate?${params.toString()}`);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Could not start generation.");
     }

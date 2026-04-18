@@ -1,15 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ReadingLevel, WorksheetGeneration } from "@/lib/types";
-
-type GenerateJobPayload = {
-  sourceStoryId: string;
-  sourceTitle: string;
-  sourceSummary: string;
-  readingLevel: ReadingLevel;
-};
 
 type GeneratedResponse = WorksheetGeneration & {
   sourceStoryId: string;
@@ -43,7 +36,6 @@ export function GenerateWorksheetClient() {
   const searchParams = useSearchParams();
   const hasStartedRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
-  const jobId = useMemo(() => searchParams.get("job"), [searchParams]);
 
   useEffect(() => {
     if (hasStartedRef.current) {
@@ -53,26 +45,23 @@ export function GenerateWorksheetClient() {
 
     async function run() {
       try {
-        if (!jobId) {
-          throw new Error("Generation job was missing. Please start from Today's Stories.");
-        }
+        const sourceStoryId = searchParams.get("sourceStoryId");
+        const sourceTitle = searchParams.get("sourceTitle");
+        const sourceSummary = searchParams.get("sourceSummary");
+        const readingLevel = searchParams.get("readingLevel") as ReadingLevel | null;
 
-        const storageKey = `generate-job:${jobId}`;
-        const rawPayload = sessionStorage.getItem(storageKey);
-        if (!rawPayload) {
-          throw new Error("Generation job expired. Please start again from Today's Stories.");
+        if (!sourceStoryId || !sourceTitle || !sourceSummary || !readingLevel) {
+          throw new Error("Generation request is missing details. Please start again from Today's Stories.");
         }
-
-        const payload = JSON.parse(rawPayload) as GenerateJobPayload;
 
         const generateResponse = await fetch("/api/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            sourceStoryId: payload.sourceStoryId,
-            sourceTitle: payload.sourceTitle,
-            sourceSummary: payload.sourceSummary,
-            readingLevel: payload.readingLevel,
+            sourceStoryId,
+            sourceTitle,
+            sourceSummary,
+            readingLevel,
             regenerateStyle: "default",
           }),
         });
@@ -106,12 +95,7 @@ export function GenerateWorksheetClient() {
           throw new Error(savedPayload.error ?? "Could not save worksheet.");
         }
 
-        // Keep the payload until redirect is in flight to avoid false \"expired\"
-        // errors if client effects rerun before navigation completes.
         router.replace(`/worksheets/${savedPayload.worksheet.id}`);
-        setTimeout(() => {
-          sessionStorage.removeItem(storageKey);
-        }, 1000);
       } catch (generationError) {
         setError(
           generationError instanceof Error
@@ -122,7 +106,7 @@ export function GenerateWorksheetClient() {
     }
 
     void run();
-  }, [jobId, router]);
+  }, [router, searchParams]);
 
   if (error) {
     return (
