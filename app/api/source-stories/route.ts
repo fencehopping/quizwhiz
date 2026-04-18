@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
-import { ingestMockStoriesIfEmpty, listSourceStories } from "@/lib/sourceStories";
+import { ingestGoogleNewsStories, listSourceStories } from "@/lib/sourceStories";
 
 export async function GET() {
-  await ingestMockStoriesIfEmpty();
+  try {
+    await ingestGoogleNewsStories();
+  } catch {
+    // Continue and return already-stored Google stories if live pull fails.
+  }
   const stories = await listSourceStories();
   return NextResponse.json({ stories });
 }

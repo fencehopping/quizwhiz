@@ -51,11 +51,11 @@ TypeScript models in `lib/types.ts`:
 Source ingestion is abstracted behind `SourceProvider`:
 
 - `lib/providers/types.ts`
-- `lib/providers/mockProvider.ts`
+- `lib/providers/googleNewsProvider.ts`
 - `lib/providers/manualProvider.ts`
 
 The app currently ships with:
-- mock provider (seeded 10 sample stories)
+- Google News provider (`news.google.com` RSS)
 - manual-entry fallback
 
 This makes it straightforward to add RSS/news API ingestion later without changing generation/UI logic.
@@ -81,7 +81,7 @@ DATABASE_FILE="db.json"
 OPENAI_API_KEY="your_openai_api_key"
 ```
 
-4. Seed mock stories
+4. Pull latest Google News stories into local storage
 
 ```bash
 npm run db:setup

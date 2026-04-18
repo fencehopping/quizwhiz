@@ -1,18 +1,9 @@
-import { mockStories } from "../lib/mockStories";
-import { upsertSourceStories } from "../lib/store";
+import { ingestGoogleNewsStories } from "../lib/sourceStories";
 
 async function main() {
-  const inserted = await upsertSourceStories(
-    mockStories.map((story) => ({
-      sourceTitle: story.sourceTitle,
-      sourceSummary: story.sourceSummary,
-      sourceUrl: story.sourceUrl,
-      sourcePublishedAt: new Date(story.sourcePublishedAt).toISOString(),
-      rawContent: story.rawContent,
-    })),
-  );
+  const inserted = await ingestGoogleNewsStories();
 
-  console.log(`Seeded/updated ${inserted} mock stories.`);
+  console.log(`Fetched/updated ${inserted} Google News stories.`);
 }
 
 main().catch((error) => {

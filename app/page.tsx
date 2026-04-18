@@ -1,9 +1,13 @@
 import { DashboardClient } from "@/components/DashboardClient";
 import { TopNav } from "@/components/TopNav";
-import { ingestMockStoriesIfEmpty, listSourceStories } from "@/lib/sourceStories";
+import { ingestGoogleNewsStories, listSourceStories } from "@/lib/sourceStories";
 
 export default async function HomePage() {
-  await ingestMockStoriesIfEmpty();
+  try {
+    await ingestGoogleNewsStories();
+  } catch {
+    // Allow page render with previously cached Google stories if live fetch fails.
+  }
   const stories = await listSourceStories();
 
   return (

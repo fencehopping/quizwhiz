@@ -1,10 +1,9 @@
 import { SourceStory } from "@/lib/types";
-import { getManualProvider, getMockProvider, getUrlProvider } from "@/lib/providers";
+import { getGoogleNewsProvider, getManualProvider, getUrlProvider } from "@/lib/providers";
 import { IngestedSourceStory } from "@/lib/providers/types";
 import {
   createSourceStory,
   listSourceStoriesFromDb,
-  sourceStoryCount,
   upsertSourceStories,
 } from "@/lib/store";
 
@@ -18,19 +17,8 @@ function normalizeStories(stories: IngestedSourceStory[]) {
   }));
 }
 
-export async function ingestMockStoriesIfEmpty(): Promise<void> {
-  const count = await sourceStoryCount();
-  if (count > 0) {
-    return;
-  }
-
-  const provider = getMockProvider();
-  const stories = await provider.fetchStories();
-  await upsertSourceStories(normalizeStories(stories));
-}
-
-export async function refreshMockStories(): Promise<number> {
-  const provider = getMockProvider();
+export async function ingestGoogleNewsStories(): Promise<number> {
+  const provider = getGoogleNewsProvider();
   const stories = await provider.fetchStories();
   return upsertSourceStories(normalizeStories(stories));
 }
@@ -56,7 +44,8 @@ export async function createManualSourceStory(input: {
 }
 
 export async function listSourceStories() {
-  return listSourceStoriesFromDb();
+  const stories = await listSourceStoriesFromDb();
+  return stories.filter((story) => story.sourceUrl.includes("news.google.com"));
 }
 
 export async function importStoriesFromUrl(url: string): Promise<number> {
