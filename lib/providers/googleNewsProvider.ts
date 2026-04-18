@@ -9,10 +9,12 @@ function decodeXmlEntities(input: string): string {
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
     .replace(/&apos;/g, "'")
-    .replace(/&nbsp;/g, " ")
+    .replace(/&nbsp;?/g, " ")
     .replace(/&#160;/g, " ")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
+    .replace(/\u00a0/g, " ")
+    .replace(/\u202f/g, " ")
     .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
     .replace(/\s+/g, " ")
     .trim();
@@ -29,14 +31,27 @@ function extractTag(xml: string, tag: string): string {
 }
 
 function summarizeDescription(rawDescription: string): string {
-  const cleaned = stripHtml(rawDescription);
+  const decoded = decodeXmlEntities(rawDescription);
+  const primaryHeadlineMatch = decoded.match(/<a[^>]*>([\s\S]*?)<\/a>/i);
+  const primarySourceMatch = decoded.match(/<font[^>]*>([\s\S]*?)<\/font>/i);
+
+  const primaryHeadline = primaryHeadlineMatch ? stripHtml(primaryHeadlineMatch[1]) : "";
+  const primarySource = primarySourceMatch ? stripHtml(primarySourceMatch[1]) : "";
+
+  if (primaryHeadline) {
+    const headlineSummary = primarySource
+      ? `${primaryHeadline} — ${primarySource}`
+      : primaryHeadline;
+    return headlineSummary.slice(0, 240).trim();
+  }
+
+  const cleaned = stripHtml(decoded);
   if (!cleaned) {
     return "";
   }
 
-  // Google News descriptions can include many related headlines in one blob.
-  // Keep the lead portion to avoid overflowing the UI with noisy snippets.
-  return cleaned.slice(0, 360).trim();
+  // Fallback for unexpected formats.
+  return cleaned.slice(0, 240).trim();
 }
 
 export class GoogleNewsProvider implements SourceProvider {
