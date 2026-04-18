@@ -58,6 +58,8 @@ export type GeneratedWorksheet = {
 
 export type GenerateRequestBody = {
   sourceStoryId?: string;
+  sourceTitle?: string;
+  sourceSummary?: string;
   manualTitle?: string;
   manualSummary?: string;
   readingLevel?: ReadingLevel;

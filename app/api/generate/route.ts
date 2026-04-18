@@ -49,10 +49,22 @@ export async function POST(request: Request) {
       sourceStoryId = manualStory.id;
     }
 
-    const sourceStory = await getSourceStoryById(sourceStoryId);
+    let sourceStory = await getSourceStoryById(sourceStoryId);
+
+    if (!sourceStory && body.sourceTitle?.trim() && body.sourceSummary?.trim()) {
+      const recreatedSource = await createManualSourceStory({
+        sourceTitle: cleanText(body.sourceTitle),
+        sourceSummary: cleanText(body.sourceSummary),
+      });
+      sourceStoryId = recreatedSource.id;
+      sourceStory = recreatedSource;
+    }
 
     if (!sourceStory) {
-      return NextResponse.json({ error: "Selected source story was not found." }, { status: 404 });
+      return NextResponse.json(
+        { error: "Selected source story was not found. Please refresh stories and try again." },
+        { status: 404 },
+      );
     }
 
     const worksheet = await generateWorksheetFromTopic({
@@ -63,7 +75,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({
-      sourceStoryId: sourceStory.id,
+      sourceStoryId: sourceStoryId,
       readingLevel: body.readingLevel,
       ...worksheet,
     });

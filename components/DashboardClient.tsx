@@ -105,11 +105,15 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
     setNotice(null);
 
     try {
+      const selectedStory = stories.find((story) => story.id === storyId);
+
       const generateResponse = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sourceStoryId: storyId,
+          sourceTitle: selectedStory?.sourceTitle,
+          sourceSummary: selectedStory?.sourceSummary,
           readingLevel,
           regenerateStyle: "default",
         }),
