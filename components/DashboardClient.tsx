@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ReadingLevel, READING_LEVELS, SourceStory, readingLevelOptions } from "@/lib/types";
+import { ReadingLevel, SourceStory, readingLevelOptions } from "@/lib/types";
 
 type GeneratedResponse = {
   sourceStoryId: string;
@@ -29,14 +29,12 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
   const router = useRouter();
   const [stories, setStories] = useState(initialStories);
   const [loadingStoryId, setLoadingStoryId] = useState<string | null>(null);
+  const [generateChoiceByStory, setGenerateChoiceByStory] = useState<Record<string, "" | ReadingLevel>>({});
   const [urlImporting, setUrlImporting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [sourceUrlInput, setSourceUrlInput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
-  const [readingLevelsByStory, setReadingLevelsByStory] = useState<Record<string, ReadingLevel>>(
-    Object.fromEntries(initialStories.map((story) => [story.id, READING_LEVELS.EIGHTH_GRADE])),
-  );
 
   async function refreshStories() {
     setRefreshing(true);
@@ -52,15 +50,6 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
       }
 
       setStories(payload.stories);
-      setReadingLevelsByStory((current) => {
-        const next = { ...current };
-        for (const story of payload.stories as SourceStory[]) {
-          if (!next[story.id]) {
-            next[story.id] = READING_LEVELS.EIGHTH_GRADE;
-          }
-        }
-        return next;
-      });
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Could not refresh stories.");
     } finally {
@@ -102,15 +91,6 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
       }
 
       setStories(payload.stories);
-      setReadingLevelsByStory((current) => {
-        const next = { ...current };
-        for (const story of payload.stories as SourceStory[]) {
-          if (!next[story.id]) {
-            next[story.id] = READING_LEVELS.EIGHTH_GRADE;
-          }
-        }
-        return next;
-      });
       setNotice(`Imported ${importPayload.insertedOrUpdated ?? 0} story candidates.`);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Could not import stories.");
@@ -119,14 +99,12 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
     }
   }
 
-  async function generateAndOpenWorksheet(storyId: string) {
+  async function generateAndOpenWorksheet(storyId: string, readingLevel: ReadingLevel) {
     setLoadingStoryId(storyId);
     setError(null);
     setNotice(null);
 
     try {
-      const readingLevel = readingLevelsByStory[storyId] ?? READING_LEVELS.EIGHTH_GRADE;
-
       const generateResponse = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -171,7 +149,28 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
       setError(requestError instanceof Error ? requestError.message : "Could not create worksheet.");
     } finally {
       setLoadingStoryId(null);
+      setGenerateChoiceByStory((current) => ({
+        ...current,
+        [storyId]: "",
+      }));
     }
+  }
+
+  function onGenerateChoice(storyId: string, value: string) {
+    if (!value) {
+      setGenerateChoiceByStory((current) => ({
+        ...current,
+        [storyId]: "",
+      }));
+      return;
+    }
+
+    setGenerateChoiceByStory((current) => ({
+      ...current,
+      [storyId]: value as ReadingLevel,
+    }));
+
+    void generateAndOpenWorksheet(storyId, value as ReadingLevel);
   }
 
   return (
@@ -181,7 +180,7 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
           <div>
             <h2 className="text-xl font-semibold text-slate-950">Today&apos;s Stories</h2>
             <p className="mt-1 text-sm text-slate-700">
-              Pick a reading level in any row, then generate to jump directly to the worksheet.
+              Use each row&apos;s Generate dropdown to pick a reading level and start the worksheet.
             </p>
           </div>
           <button
@@ -218,10 +217,10 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
         <div className="mt-4 divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200">
           {stories.map((story) => {
             const isLoading = loadingStoryId === story.id;
-            const currentLevel = readingLevelsByStory[story.id] ?? READING_LEVELS.EIGHTH_GRADE;
+            const currentChoice = generateChoiceByStory[story.id] ?? "";
 
             return (
-              <div key={story.id} className="grid gap-4 bg-slate-50 p-4 lg:grid-cols-[1fr_auto_auto] lg:items-center">
+              <div key={story.id} className="grid gap-4 bg-slate-50 p-4 lg:grid-cols-[1fr_auto] lg:items-center">
                 <div>
                   <h3 className="text-base font-semibold text-slate-950">{story.sourceTitle}</h3>
                   <p className="mt-1 text-sm text-slate-700">{story.sourceSummary}</p>
@@ -239,33 +238,23 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
                 </div>
 
                 <label className="text-sm font-medium text-slate-900">
-                  Reading Level
+                  Generate Worksheet
                   <select
-                    value={currentLevel}
-                    onChange={(event) =>
-                      setReadingLevelsByStory((current) => ({
-                        ...current,
-                        [story.id]: event.target.value as ReadingLevel,
-                      }))
-                    }
-                    className="mt-1 w-full min-w-40 rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-950"
+                    value={currentChoice}
+                    onChange={(event) => onGenerateChoice(story.id, event.target.value)}
+                    disabled={loadingStoryId !== null}
+                    className="mt-1 w-full min-w-56 rounded-xl border border-slate-300 bg-blue-700 px-3 py-2 font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
                   >
+                    <option value="" className="bg-white text-slate-900">
+                      {isLoading ? "Generating..." : "Generate Worksheet"}
+                    </option>
                     {readingLevelOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
+                      <option key={option.value} value={option.value} className="bg-white text-slate-900">
+                        {`Generate (${option.label})`}
                       </option>
                     ))}
                   </select>
                 </label>
-
-                <button
-                  type="button"
-                  onClick={() => generateAndOpenWorksheet(story.id)}
-                  disabled={isLoading || loadingStoryId !== null}
-                  className="h-fit rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-slate-300"
-                >
-                  {isLoading ? "Generating..." : "Generate Worksheet"}
-                </button>
               </div>
             );
           })}
