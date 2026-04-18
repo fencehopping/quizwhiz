@@ -32,17 +32,23 @@ function extractTag(xml: string, tag: string): string {
 
 function summarizeDescription(rawDescription: string): string {
   const decoded = decodeXmlEntities(rawDescription);
-  const primaryHeadlineMatch = decoded.match(/<a[^>]*>([\s\S]*?)<\/a>/i);
-  const primarySourceMatch = decoded.match(/<font[^>]*>([\s\S]*?)<\/font>/i);
+  const anchorMatches = [...decoded.matchAll(/<a[^>]*>([\s\S]*?)<\/a>/gi)];
+  const fontMatches = [...decoded.matchAll(/<font[^>]*>([\s\S]*?)<\/font>/gi)];
 
-  const primaryHeadline = primaryHeadlineMatch ? stripHtml(primaryHeadlineMatch[1]) : "";
-  const primarySource = primarySourceMatch ? stripHtml(primarySourceMatch[1]) : "";
+  const primaryItems = anchorMatches
+    .slice(0, 3)
+    .map((match, index) => {
+      const headline = stripHtml(match[1] ?? "");
+      const source = stripHtml(fontMatches[index]?.[1] ?? "");
+      if (!headline) {
+        return "";
+      }
+      return source ? `${headline} — ${source}` : headline;
+    })
+    .filter(Boolean);
 
-  if (primaryHeadline) {
-    const headlineSummary = primarySource
-      ? `${primaryHeadline} — ${primarySource}`
-      : primaryHeadline;
-    return headlineSummary.slice(0, 240).trim();
+  if (primaryItems.length > 0) {
+    return primaryItems.join(" | ").slice(0, 520).trim();
   }
 
   const cleaned = stripHtml(decoded);
@@ -51,7 +57,7 @@ function summarizeDescription(rawDescription: string): string {
   }
 
   // Fallback for unexpected formats.
-  return cleaned.slice(0, 240).trim();
+  return cleaned.slice(0, 520).trim();
 }
 
 export class GoogleNewsProvider implements SourceProvider {

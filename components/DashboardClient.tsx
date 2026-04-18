@@ -220,10 +220,13 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
             const currentChoice = generateChoiceByStory[story.id] ?? "";
 
             return (
-              <div key={story.id} className="grid gap-4 bg-slate-50 p-4 lg:grid-cols-[1fr_auto] lg:items-center">
+              <div
+                key={story.id}
+                className="grid gap-3 bg-slate-50 p-4 lg:grid-cols-[minmax(0,1fr)_13rem] lg:items-start"
+              >
                 <div>
                   <h3 className="text-base font-semibold text-slate-950">{story.sourceTitle}</h3>
-                  <p className="mt-1 text-sm text-slate-700">{story.sourceSummary}</p>
+                  <p className="mt-1 text-sm leading-6 text-slate-700">{story.sourceSummary}</p>
                   <div className="mt-2 flex flex-wrap gap-3 text-xs text-slate-600">
                     <a
                       href={story.sourceUrl}
@@ -243,7 +246,7 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
                     value={currentChoice}
                     onChange={(event) => onGenerateChoice(story.id, event.target.value)}
                     disabled={loadingStoryId !== null}
-                    className="mt-1 w-full min-w-56 rounded-xl border border-slate-300 bg-blue-700 px-3 py-2 font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+                    className="mt-1 w-full min-w-0 rounded-lg border border-slate-300 bg-blue-700 px-2.5 py-1.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
                   >
                     <option value="" className="bg-white text-slate-900">
                       {isLoading ? "Generating..." : "Generate Worksheet"}
