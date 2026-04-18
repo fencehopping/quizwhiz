@@ -40,21 +40,21 @@ export function SavedWorksheetActions({ worksheetId, worksheet }: SavedWorksheet
       <button
         type="button"
         onClick={() => navigator.clipboard.writeText(asText(worksheet))}
-        className="rounded-full border border-cyan-300 px-3 py-1.5 text-sm font-medium text-teal-900 hover:bg-cyan-100"
+        className="rounded-full border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-blue-50"
       >
         Copy Output
       </button>
       <button
         type="button"
         onClick={() => window.print()}
-        className="rounded-full border border-cyan-300 px-3 py-1.5 text-sm font-medium text-teal-900 hover:bg-cyan-100"
+        className="rounded-full border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-blue-50"
       >
         Print Quiz as PDF
       </button>
       <button
         type="button"
         onClick={deleteItem}
-        className="rounded-full border border-red-200 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-50"
+        className="rounded-full border border-red-300 px-3 py-1.5 text-sm font-medium text-red-900 hover:bg-red-50"
       >
         Delete
       </button>

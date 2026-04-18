@@ -15,19 +15,19 @@ const links = [
 
 export function TopNav({ title, subtitle, actions }: TopNavProps) {
   return (
-    <header className="sticky top-0 z-10 border-b border-cyan-100 bg-cyan-50/90 backdrop-blur print:hidden">
+    <header className="sticky top-0 z-10 border-b border-slate-200 bg-slate-50/95 backdrop-blur print:hidden">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         <div>
-          <p className="text-xs uppercase tracking-[0.18em] text-cyan-500">SpeechWhiz</p>
-          {title ? <h1 className="text-lg font-semibold text-teal-950">{title}</h1> : null}
-          {subtitle ? <p className="text-sm text-teal-800/80">{subtitle}</p> : null}
+          <p className="text-xs uppercase tracking-[0.18em] text-blue-700">SpeechWhiz</p>
+          {title ? <h1 className="text-lg font-semibold text-slate-950">{title}</h1> : null}
+          {subtitle ? <p className="text-sm text-slate-700">{subtitle}</p> : null}
         </div>
         <nav className="flex items-center gap-2 sm:gap-3">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-full px-3 py-1.5 text-sm font-medium text-teal-900 transition hover:bg-cyan-100"
+              className="rounded-full px-3 py-1.5 text-sm font-medium text-slate-900 transition hover:bg-blue-50"
             >
               {link.label}
             </Link>

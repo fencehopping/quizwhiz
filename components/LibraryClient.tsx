@@ -66,17 +66,17 @@ export function LibraryClient({ initialItems }: LibraryClientProps) {
 
   return (
     <main className="mx-auto w-full max-w-5xl space-y-5 px-4 py-6 sm:px-6 lg:px-8">
-      <section className="rounded-3xl border border-cyan-200 bg-white p-6">
+      <section className="rounded-3xl border border-slate-200 bg-white p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-xl font-semibold text-teal-950">Saved Materials</h2>
-          <label className="text-sm text-teal-900">
+          <h2 className="text-xl font-semibold text-slate-950">Saved Materials</h2>
+          <label className="text-sm text-slate-900">
             Filter by Reading Level
             <select
               value={readingLevel}
               onChange={(event) =>
                 void handleLevelChange(event.target.value as "ALL" | ReadingLevel)
               }
-              className="ml-2 rounded-lg border border-cyan-300 bg-cyan-50 px-2 py-1"
+              className="ml-2 rounded-lg border border-slate-300 bg-slate-50 px-2 py-1"
             >
               <option value="ALL">All</option>
               {readingLevelOptions.map((option) => (
@@ -88,22 +88,22 @@ export function LibraryClient({ initialItems }: LibraryClientProps) {
           </label>
         </div>
 
-        {loading ? <p className="mt-4 text-teal-800">Loading...</p> : null}
-        {error ? <p className="mt-4 text-red-700">{error}</p> : null}
+        {loading ? <p className="mt-4 text-slate-700">Loading...</p> : null}
+        {error ? <p className="mt-4 text-red-900">{error}</p> : null}
 
         {!loading && !error ? (
           <ul className="mt-4 space-y-3">
             {items.map((item) => (
               <li
                 key={item.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-cyan-200 bg-cyan-50 p-4"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4"
               >
                 <div>
-                  <h3 className="font-semibold text-teal-950">{item.title}</h3>
-                  <p className="text-sm text-teal-800">
+                  <h3 className="font-semibold text-slate-950">{item.title}</h3>
+                  <p className="text-sm text-slate-700">
                     From: {item.sourceStory?.sourceTitle ?? "Unknown source"}
                   </p>
-                  <p className="text-xs text-teal-700">
+                  <p className="text-xs text-slate-600">
                     {item.readingLevel === READING_LEVELS.EIGHTH_GRADE ? "8th Grade" : "High School"} ·{" "}
                     {new Date(item.createdAt).toLocaleString()}
                   </p>
@@ -111,14 +111,14 @@ export function LibraryClient({ initialItems }: LibraryClientProps) {
                 <div className="flex gap-2">
                   <Link
                     href={`/worksheets/${item.id}`}
-                    className="rounded-full border border-cyan-300 px-3 py-1.5 text-sm font-medium text-teal-900 hover:bg-cyan-100"
+                    className="rounded-full border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-blue-50"
                   >
                     Open
                   </Link>
                   <button
                     type="button"
                     onClick={() => deleteItem(item.id)}
-                    className="rounded-full border border-red-200 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-50"
+                    className="rounded-full border border-red-300 px-3 py-1.5 text-sm font-medium text-red-900 hover:bg-red-50"
                   >
                     Delete
                   </button>
@@ -126,7 +126,7 @@ export function LibraryClient({ initialItems }: LibraryClientProps) {
               </li>
             ))}
             {items.length === 0 ? (
-              <li className="rounded-2xl border border-dashed border-cyan-300 bg-cyan-50 p-5 text-teal-800">
+              <li className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5 text-slate-700">
                 No saved worksheets yet.
               </li>
             ) : null}

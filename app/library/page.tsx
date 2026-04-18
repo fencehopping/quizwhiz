@@ -6,7 +6,7 @@ export default async function LibraryPage() {
   const worksheets = await listWorksheetsFromDb();
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#e6f7ff,white_35%)]">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#dbeafe,#f8fafc_38%)]">
       <TopNav title="Saved Materials" subtitle="Re-open and manage prior worksheets" />
       <LibraryClient initialItems={worksheets} />
     </div>
