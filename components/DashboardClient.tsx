@@ -4,23 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ReadingLevel, SourceStory, readingLevelOptions } from "@/lib/types";
 
-type GeneratedResponse = {
-  sourceStoryId: string;
-  readingLevel: ReadingLevel;
-  title: string;
-  story: string;
-  questions: Array<{
-    type: "main_idea" | "detail" | "inferencing";
-    question: string;
-    choices: [string, string, string, string];
-    correctAnswer: "A" | "B" | "C" | "D";
-  }>;
-  vocabulary: Array<{
-    word: string;
-    definition: string;
-  }>;
-};
-
 type DashboardClientProps = {
   initialStories: SourceStory[];
 };
@@ -28,7 +11,6 @@ type DashboardClientProps = {
 export function DashboardClient({ initialStories }: DashboardClientProps) {
   const router = useRouter();
   const [stories, setStories] = useState(initialStories);
-  const [loadingStoryId, setLoadingStoryId] = useState<string | null>(null);
   const [generateChoiceByStory, setGenerateChoiceByStory] = useState<Record<string, "" | ReadingLevel>>({});
   const [urlImporting, setUrlImporting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -99,64 +81,36 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
     }
   }
 
-  async function generateAndOpenWorksheet(storyId: string, readingLevel: ReadingLevel) {
-    setLoadingStoryId(storyId);
+  function startGenerateFlow(storyId: string, readingLevel: ReadingLevel) {
     setError(null);
     setNotice(null);
 
     try {
       const selectedStory = stories.find((story) => story.id === storyId);
+      if (!selectedStory) {
+        throw new Error("Story not found. Please refresh and try again.");
+      }
 
-      const generateResponse = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sourceStoryId: storyId,
-          sourceTitle: selectedStory?.sourceTitle,
-          sourceSummary: selectedStory?.sourceSummary,
+      if (typeof crypto === "undefined" || !crypto.randomUUID) {
+        throw new Error("Secure generation is unavailable in this browser. Please refresh and try again.");
+      }
+
+      const jobId = crypto.randomUUID();
+
+      const storageKey = `generate-job:${jobId}`;
+      sessionStorage.setItem(
+        storageKey,
+        JSON.stringify({
+          sourceStoryId: selectedStory.id,
+          sourceTitle: selectedStory.sourceTitle,
+          sourceSummary: selectedStory.sourceSummary,
           readingLevel,
-          regenerateStyle: "default",
         }),
-      });
+      );
 
-      const generated = (await generateResponse.json()) as GeneratedResponse | { error?: string };
-      if (!generateResponse.ok || !("title" in generated)) {
-        throw new Error((generated as { error?: string }).error ?? "Generation failed.");
-      }
-
-      const saveResponse = await fetch("/api/worksheets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sourceStoryId: generated.sourceStoryId,
-          readingLevel: generated.readingLevel,
-          worksheet: {
-            title: generated.title,
-            story: generated.story,
-            questions: generated.questions,
-            vocabulary: generated.vocabulary,
-          },
-        }),
-      });
-
-      const savedPayload = (await saveResponse.json()) as {
-        worksheet?: { id: string };
-        error?: string;
-      };
-
-      if (!saveResponse.ok || !savedPayload.worksheet?.id) {
-        throw new Error(savedPayload.error ?? "Could not save worksheet.");
-      }
-
-      router.push(`/worksheets/${savedPayload.worksheet.id}`);
+      router.push(`/worksheets/generate?job=${encodeURIComponent(jobId)}`);
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Could not create worksheet.");
-    } finally {
-      setLoadingStoryId(null);
-      setGenerateChoiceByStory((current) => ({
-        ...current,
-        [storyId]: "",
-      }));
+      setError(requestError instanceof Error ? requestError.message : "Could not start generation.");
     }
   }
 
@@ -174,7 +128,7 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
       [storyId]: value as ReadingLevel,
     }));
 
-    void generateAndOpenWorksheet(storyId, value as ReadingLevel);
+    startGenerateFlow(storyId, value as ReadingLevel);
   }
 
   return (
@@ -220,7 +174,6 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
 
         <div className="mt-4 divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200">
           {stories.map((story) => {
-            const isLoading = loadingStoryId === story.id;
             const currentChoice = generateChoiceByStory[story.id] ?? "";
 
             return (
@@ -249,11 +202,10 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
                   <select
                     value={currentChoice}
                     onChange={(event) => onGenerateChoice(story.id, event.target.value)}
-                    disabled={loadingStoryId !== null}
                     className="mt-1 w-full min-w-0 rounded-lg border border-slate-300 bg-blue-700 px-2.5 py-1.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
                   >
                     <option value="" className="bg-white text-slate-900">
-                      {isLoading ? "Generating..." : "Generate Worksheet"}
+                      Generate Worksheet
                     </option>
                     {readingLevelOptions.map((option) => (
                       <option key={option.value} value={option.value} className="bg-white text-slate-900">
