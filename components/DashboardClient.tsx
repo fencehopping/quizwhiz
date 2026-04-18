@@ -29,8 +29,11 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
   const router = useRouter();
   const [stories, setStories] = useState(initialStories);
   const [loadingStoryId, setLoadingStoryId] = useState<string | null>(null);
+  const [urlImporting, setUrlImporting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [sourceUrlInput, setSourceUrlInput] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [readingLevelsByStory, setReadingLevelsByStory] = useState<Record<string, ReadingLevel>>(
     Object.fromEntries(initialStories.map((story) => [story.id, READING_LEVELS.EIGHTH_GRADE])),
   );
@@ -38,6 +41,7 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
   async function refreshStories() {
     setRefreshing(true);
     setError(null);
+    setNotice(null);
 
     try {
       await fetch("/api/source-stories/ingest", { method: "POST" });
@@ -64,9 +68,61 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
     }
   }
 
+  async function importStoriesFromUrl() {
+    const trimmedUrl = sourceUrlInput.trim();
+    if (!trimmedUrl) {
+      setError("Paste a URL to import stories.");
+      return;
+    }
+
+    setUrlImporting(true);
+    setError(null);
+    setNotice(null);
+
+    try {
+      const importResponse = await fetch("/api/source-stories/import-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: trimmedUrl }),
+      });
+
+      const importPayload = (await importResponse.json()) as {
+        insertedOrUpdated?: number;
+        error?: string;
+      };
+
+      if (!importResponse.ok) {
+        throw new Error(importPayload.error ?? "Could not import stories from URL.");
+      }
+
+      const response = await fetch("/api/source-stories");
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Stories imported but list refresh failed.");
+      }
+
+      setStories(payload.stories);
+      setReadingLevelsByStory((current) => {
+        const next = { ...current };
+        for (const story of payload.stories as SourceStory[]) {
+          if (!next[story.id]) {
+            next[story.id] = READING_LEVELS.EIGHTH_GRADE;
+          }
+        }
+        return next;
+      });
+      setNotice(`Imported ${importPayload.insertedOrUpdated ?? 0} story candidates.`);
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "Could not import stories.");
+    } finally {
+      setUrlImporting(false);
+    }
+  }
+
   async function generateAndOpenWorksheet(storyId: string) {
     setLoadingStoryId(storyId);
     setError(null);
+    setNotice(null);
 
     try {
       const readingLevel = readingLevelsByStory[storyId] ?? READING_LEVELS.EIGHTH_GRADE;
@@ -138,7 +194,26 @@ export function DashboardClient({ initialStories }: DashboardClientProps) {
           </button>
         </div>
 
+        <div className="mt-4 flex flex-col gap-2 rounded-2xl border border-cyan-200 bg-cyan-50/60 p-3 sm:flex-row sm:items-center">
+          <input
+            type="url"
+            value={sourceUrlInput}
+            onChange={(event) => setSourceUrlInput(event.target.value)}
+            placeholder="Paste a news/category URL to extract story links..."
+            className="w-full rounded-xl border border-cyan-300 bg-white px-3 py-2 text-sm text-teal-950 placeholder:text-teal-700/60"
+          />
+          <button
+            type="button"
+            onClick={importStoriesFromUrl}
+            disabled={urlImporting}
+            className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-cyan-300"
+          >
+            {urlImporting ? "Importing..." : "Import Stories"}
+          </button>
+        </div>
+
         {error ? <p className="mt-3 text-sm text-red-700">{error}</p> : null}
+        {notice ? <p className="mt-3 text-sm text-teal-700">{notice}</p> : null}
 
         <div className="mt-4 divide-y divide-cyan-100 overflow-hidden rounded-2xl border border-cyan-200">
           {stories.map((story) => {
