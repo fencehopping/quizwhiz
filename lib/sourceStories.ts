@@ -1,5 +1,5 @@
 import { SourceStory } from "@/lib/types";
-import { getGoogleNewsProvider, getManualProvider, getUrlProvider } from "@/lib/providers";
+import { getManualProvider, getNewsForKidsProvider, getUrlProvider } from "@/lib/providers";
 import { IngestedSourceStory } from "@/lib/providers/types";
 import {
   createSourceStory,
@@ -35,8 +35,8 @@ function normalizeStories(stories: IngestedSourceStory[]) {
   }));
 }
 
-export async function ingestGoogleNewsStories(): Promise<number> {
-  const provider = getGoogleNewsProvider();
+export async function ingestNewsForKidsStories(): Promise<number> {
+  const provider = getNewsForKidsProvider();
   const stories = await provider.fetchStories();
   return upsertSourceStories(normalizeStories(stories));
 }
@@ -64,7 +64,14 @@ export async function createManualSourceStory(input: {
 export async function listSourceStories() {
   const stories = await listSourceStoriesFromDb();
   return stories
-    .filter((story) => story.sourceUrl.includes("news.google.com"))
+    .filter((story) => {
+      try {
+        const hostname = new URL(story.sourceUrl).hostname.toLowerCase();
+        return hostname === "newsforkids.net" || hostname.endsWith(".newsforkids.net");
+      } catch {
+        return false;
+      }
+    })
     .map((story) => ({
       ...story,
       sourceTitle: cleanText(story.sourceTitle),

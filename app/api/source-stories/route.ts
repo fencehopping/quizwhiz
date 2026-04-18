@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { ingestGoogleNewsStories, listSourceStories } from "@/lib/sourceStories";
+import { ingestNewsForKidsStories, listSourceStories } from "@/lib/sourceStories";
 
 export async function GET() {
   try {
-    await ingestGoogleNewsStories();
+    await ingestNewsForKidsStories();
   } catch {
-    // Continue and return already-stored Google stories if live pull fails.
+    // Continue and return already-stored NewsForKids stories if live pull fails.
   }
   const stories = await listSourceStories();
   return NextResponse.json({ stories });

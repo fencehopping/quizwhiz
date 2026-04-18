@@ -1,9 +1,9 @@
-import { ingestGoogleNewsStories } from "../lib/sourceStories";
+import { ingestNewsForKidsStories } from "../lib/sourceStories";
 
 async function main() {
-  const inserted = await ingestGoogleNewsStories();
+  const inserted = await ingestNewsForKidsStories();
 
-  console.log(`Fetched/updated ${inserted} Google News stories.`);
+  console.log(`Fetched/updated ${inserted} NewsForKids stories.`);
 }
 
 main().catch((error) => {

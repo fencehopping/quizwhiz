@@ -1,10 +1,10 @@
 import { DashboardClient } from "@/components/DashboardClient";
 import { TopNav } from "@/components/TopNav";
-import { ingestGoogleNewsStories, listSourceStories } from "@/lib/sourceStories";
+import { ingestNewsForKidsStories, listSourceStories } from "@/lib/sourceStories";
 
 export default async function HomePage() {
   try {
-    await ingestGoogleNewsStories();
+    await ingestNewsForKidsStories();
   } catch {
     // Allow page render with previously cached Google stories if live fetch fails.
   }

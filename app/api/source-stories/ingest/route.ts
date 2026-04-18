@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { ingestGoogleNewsStories } from "@/lib/sourceStories";
+import { ingestNewsForKidsStories } from "@/lib/sourceStories";
 
 export async function POST() {
   try {
-    const count = await ingestGoogleNewsStories();
+    const count = await ingestNewsForKidsStories();
     return NextResponse.json({ insertedOrUpdated: count });
   } catch (error) {
     return NextResponse.json(
@@ -11,7 +11,7 @@ export async function POST() {
         error:
           error instanceof Error
             ? error.message
-            : "Could not fetch latest stories from Google News.",
+            : "Could not fetch latest stories from NewsForKids.",
       },
       { status: 502 },
     );

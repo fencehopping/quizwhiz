@@ -1,10 +1,10 @@
-import { GoogleNewsProvider } from "@/lib/providers/googleNewsProvider";
 import { ManualSourceProvider } from "@/lib/providers/manualProvider";
+import { NewsForKidsProvider } from "@/lib/providers/newsForKidsProvider";
 import { SourceProvider } from "@/lib/providers/types";
 import { UrlSourceProvider } from "@/lib/providers/urlProvider";
 
-export function getGoogleNewsProvider(): SourceProvider {
-  return new GoogleNewsProvider();
+export function getNewsForKidsProvider(): SourceProvider {
+  return new NewsForKidsProvider();
 }
 
 export function getManualProvider(title: string, summary: string): SourceProvider {
