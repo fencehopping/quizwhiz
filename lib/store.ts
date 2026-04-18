@@ -8,7 +8,10 @@ type DatabaseShape = {
   generatedWorksheets: GeneratedWorksheet[];
 };
 
-const dataDir = path.join(process.cwd(), "data");
+const isVercelRuntime = process.env.VERCEL === "1";
+const localDataDir = path.join(process.cwd(), "data");
+const runtimeDataDir = "/tmp/speechwhiz";
+const dataDir = isVercelRuntime ? runtimeDataDir : localDataDir;
 const dbFileName = process.env.DATABASE_FILE ?? "db.json";
 const dbPath = path.join(dataDir, dbFileName);
 
